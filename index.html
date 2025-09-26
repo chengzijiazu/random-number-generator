@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机数生成器</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>随机数生成器</h1>
+            <p>生成 1-1000 范围内的随机数</p>
+        </div>
+
+        <div class="card-container">
+            <div class="result-card">
+                <div class="number-display">
+                    <span id="randomNumber">?</span>
+                </div>
+                <div class="range-info">1 - 1000</div>
+            </div>
+
+            <div class="control-card">
+                <button id="generateBtn" class="generate-btn">
+                    <span class="btn-text">生成随机数</span>
+                </button>
+                <button id="historyBtn" class="history-btn">
+                    <span class="btn-text">查看历史</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <h3>生成历史</h3>
+                <button id="clearHistory" class="clear-btn">清除</button>
+            </div>
+            <div class="history-list" id="historyList">
+                <!-- 历史记录将在这里显示 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
