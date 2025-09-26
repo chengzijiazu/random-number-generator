@@ -16,6 +16,9 @@ class RandomNumberGenerator {
         this.historyPanel = document.getElementById('historyPanel');
         this.historyList = document.getElementById('historyList');
         this.clearHistoryBtn = document.getElementById('clearHistory');
+        this.minValueInput = document.getElementById('minValue');
+        this.maxValueInput = document.getElementById('maxValue');
+        this.rangeInfo = document.getElementById('rangeInfo');
     }
 
     // 绑定事件监听器
@@ -23,6 +26,12 @@ class RandomNumberGenerator {
         this.generateBtn.addEventListener('click', () => this.generateRandomNumber());
         this.historyBtn.addEventListener('click', () => this.toggleHistory());
         this.clearHistoryBtn.addEventListener('click', () => this.clearHistory());
+
+        // 添加范围输入监听器
+        this.minValueInput.addEventListener('input', () => this.validateAndUpdateRange());
+        this.maxValueInput.addEventListener('input', () => this.validateAndUpdateRange());
+        this.minValueInput.addEventListener('blur', () => this.validateAndUpdateRange());
+        this.maxValueInput.addEventListener('blur', () => this.validateAndUpdateRange());
 
         // 添加键盘支持
         document.addEventListener('keydown', (e) => {
@@ -45,14 +54,20 @@ class RandomNumberGenerator {
         });
     }
 
-    // 生成随机数（1-1000）
+    // 生成随机数
     generateRandomNumber() {
+        // 验证范围
+        this.validateAndUpdateRange();
+
+        const min = parseInt(this.minValueInput.value) || 1;
+        const max = parseInt(this.maxValueInput.value) || 1000;
+
         // 添加生成中的视觉反馈
         this.setGeneratingState();
 
         // 模拟生成过程的延迟，增加用户体验
         setTimeout(() => {
-            const randomNum = Math.floor(Math.random() * 1000) + 1;
+            const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
             this.displayNumber(randomNum);
             this.addToHistory(randomNum);
             this.resetGeneratingState();
@@ -208,6 +223,62 @@ class RandomNumberGenerator {
         } catch (e) {
             console.warn('无法从本地存储加载历史记录');
             return [];
+        }
+    }
+
+    // 验证并更新范围
+    validateAndUpdateRange() {
+        let min = parseInt(this.minValueInput.value);
+        let max = parseInt(this.maxValueInput.value);
+
+        // 设置默认值
+        if (isNaN(min) || min < 0) {
+            min = 1;
+            this.minValueInput.value = 1;
+        }
+        if (isNaN(max) || max < 1) {
+            max = 1000;
+            this.maxValueInput.value = 1000;
+        }
+
+        // 确保最小值不大于最大值
+        if (min > max) {
+            if (this.minValueInput === document.activeElement) {
+                // 如果正在编辑最小值，调整最大值
+                max = min + 1;
+                this.maxValueInput.value = max;
+            } else {
+                // 如果正在编辑最大值，调整最小值
+                min = max - 1;
+                this.minValueInput.value = min;
+            }
+        }
+
+        // 更新范围显示
+        this.rangeInfo.textContent = `${min} - ${max}`;
+
+        // 添加输入验证的视觉反馈
+        this.addValidationFeedback();
+    }
+
+    // 添加验证反馈
+    addValidationFeedback() {
+        const min = parseInt(this.minValueInput.value);
+        const max = parseInt(this.maxValueInput.value);
+
+        // 重置样式
+        this.minValueInput.style.borderColor = '';
+        this.maxValueInput.style.borderColor = '';
+
+        // 如果范围有效，添加成功样式
+        if (min < max && !isNaN(min) && !isNaN(max)) {
+            this.minValueInput.style.borderColor = '#48bb78';
+            this.maxValueInput.style.borderColor = '#48bb78';
+
+            setTimeout(() => {
+                this.minValueInput.style.borderColor = '';
+                this.maxValueInput.style.borderColor = '';
+            }, 1500);
         }
     }
 }
